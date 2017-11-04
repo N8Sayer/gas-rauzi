@@ -45,24 +45,39 @@ function outputBuilder(namedValues,sheet,name) {
   return output;
 }
 
-function formulaMaker(names) {  
+function formulaMaker(names) { 
+  var uniqueNames = [];
+  var setter = false;
+  for (var a=0; a<names.length; a++) {
+    for (var b=0; b<uniqueNames.length; b++) {
+      if (names[a] == uniqueNames[b]) {
+        setter = true;
+        b = uniqueNames.length;
+      }
+    }
+    if (!setter) {
+      uniqueNames.push(names[a]);
+    }
+    setter = false;
+  }
+  
   var formula = '=FILTER({';
   
-  for (var x=1; x<names.length; x++) {
-    if (x == names.length-1) {
-      formula += names[x][3] + "!A2:Z";
+  for (var x=1; x<uniqueNames.length; x++) {
+    if (x == uniqueNames.length-1) {
+      formula += uniqueNames[x][3] + "!A2:O";
     }
     else {
-      formula += names[x][3] + "!A2:Z;";
+      formula += uniqueNames[x][3] + "!A2:O;";
     }
   }
   formula += '},{';
-  for (var y=1; y<names.length; y++) {
-    if (y == names.length-1) {
-      formula += names[y][3] + "!A2:A";
+  for (var y=1; y<uniqueNames.length; y++) {
+    if (y == uniqueNames.length-1) {
+      formula += uniqueNames[y][3] + "!A2:A";
     }
     else {
-      formula += names[y][3] + "!A2:A;";
+      formula += uniqueNames[y][3] + "!A2:A;";
     }
   }
   formula += '}<>"")';

@@ -7,7 +7,11 @@ function onFormSubmit(evt) {
       var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[3]); 
       var lastRow = sheet.getLastRow();
       var output = outputBuilder(evt.namedValues,sheet,row[3]);
-      sheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
+      var lastEntry = sheet.getRange(lastRow,1,1,output.length).getDisplayValues();
+      
+      if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // THIS IS THE PART I JUST CHANGED TO BLOCK DUPLICATES
+        sheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
+      }
     }
   });
 }
@@ -51,8 +55,8 @@ function formUpdate() {
     var choices = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getDataRange().getDisplayValues();
     
     for (var x=0; x<items.length; x++) {
-      var currentChoice = items[x].asListItem().getChoices()[0].getValue();
       if (items[x].getTitle().toLowerCase().search('prompt') !== -1) {
+        var currentChoice = items[x].asListItem().getChoices()[0].getValue();
         choices.forEach(function (row,index) {
           if (row[1] == currentChoice) {
             items[x].asListItem().setChoiceValues([choices[index+1][1]]);

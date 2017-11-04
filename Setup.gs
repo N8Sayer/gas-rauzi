@@ -1,13 +1,27 @@
 function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Setup Menu')
-    .addItem('First Time Run Setup', 'menuItem1')
+    .addItem('Student Page Setup', 'menuItem1')
+    .addSeparator()
+    .addItem('Trigger Installer', 'menuItem2')
+    .addSeparator()
+    .addItem('Student Page Deleter', 'menuItem3')
     .addToUi();  
 }
 
 function menuItem1() {
-  triggers();
   pageMaster();
+}
+
+function menuItem2() {
+  triggers();  
+}
+
+function menuItem3() {
+  var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();  
+  for (var x=8; x<sheets.length; x++) {
+    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
+  }
 }
 
 function triggers() {
