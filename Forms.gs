@@ -1,3 +1,4 @@
+// This is just a specialized onFormSubmit which sorts incoming submissions to the appropriate student page, and blocks duplicate entries. 
 function onFormSubmit(evt) {
   var key = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getDisplayValues();
   var output = [];
@@ -9,7 +10,7 @@ function onFormSubmit(evt) {
       var output = outputBuilder(evt.namedValues,sheet,row[3]);
       var lastEntry = sheet.getRange(lastRow,1,1,output.length).getDisplayValues();
       
-      if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // THIS IS THE PART I JUST CHANGED TO BLOCK DUPLICATES
+      if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
         sheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
       }
     }
@@ -45,6 +46,7 @@ function test_onFormSubmit() {
   }  
 }
 
+/* DEPRECATED
 function formUpdate() {
   var date = new Date();
   
@@ -66,4 +68,4 @@ function formUpdate() {
       }
     }
   }
-}
+}*/

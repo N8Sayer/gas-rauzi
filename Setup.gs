@@ -1,43 +1,37 @@
+// When the document opens, make a Custom Menu for user functions.
 function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Setup Menu')
-    .addItem('Student Page Setup', 'menuItem1')
+    .addItem('Update Student Pages After Roster Change', 'pageMaster')
     .addSeparator()
-    .addItem('Trigger Installer', 'menuItem2')
+    .addItem('Install Triggers (Run Once)', 'triggers')
     .addSeparator()
-    .addItem('Student Page Deleter', 'menuItem3')
+    .addItem('Delete Student Pages', 'deleteStudents')
+    .addSeparator()
+    .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  
 }
 
-function menuItem1() {
-  pageMaster();
-}
-
-function menuItem2() {
-  triggers();  
-}
-
-function menuItem3() {
+// When students drop out, sometimes it's necessary to run this before updating the roster.
+// It really depends on what is being changed on the roster.
+function deleteStudents() {
   var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();  
   for (var x=8; x<sheets.length; x++) {
     SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
   }
 }
 
+// Create the onFormSubmit trigger.
 function triggers() {
   var sheet = SpreadsheetApp.getActive();
   ScriptApp.newTrigger("onFormSubmit")
    .forSpreadsheet(sheet)
    .onFormSubmit()
    .create();
-  
-  ScriptApp.newTrigger("formUpdate")
-   .timeBased()
-   .atHour(2)
-   .everyDays(1)
-   .create();
 }
 
+// This function creates the pages for each student based off of the info from the Roster, and the Templates. 
+// If a student exists already, it doesn't make a new sheet or create a chart.
 function pageMaster() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var template1 = ss.getSheetByName('Template - Data');
@@ -66,6 +60,7 @@ function pageMaster() {
           
           if (!ss.getSheetByName(row[3] + ' Charts')) {
             var userCharts = ss.insertSheet(row[3] + ' Charts', 11); 
+            // Calls the chart making function
             chartGet(userSheet,userCharts);                
           }
         }
@@ -78,6 +73,7 @@ function pageMaster() {
   main.getRange(2,1).setFormula(formula);
 }
 
+// Calls the function which makes the individual user charts
 function chartGet(dataPage,chartPage) {
   var charts = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Template - Individual Charts').getCharts(); 
   var chartOrders = [['O2:O1095'],['O2:O1095','J2:J1095'],['O2:O1095','J2:J1095'],['B2:B1095','J2:J1095'],['O2:O1095','N2:N1095'],['A2:A1095','J2:J1095']];

@@ -1,3 +1,4 @@
+/* Deprecated, converts student names to abbreviations
 function abbr(range) {
   for (var y=0; y<range.length; y++) {
     if (range[y] == "") {
@@ -23,8 +24,9 @@ function abbr(range) {
     count = 2;
   });  
   return range;
-}
+}*/
 
+// Appends the extra stats onto forms before they are moved to the correct student sheet
 function outputBuilder(namedValues,sheet,name) {
   var output = [];
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
@@ -45,6 +47,7 @@ function outputBuilder(namedValues,sheet,name) {
   return output;
 }
 
+// Creates the custom formula used on MAIN to display all of the student data for the Group Charts to feed off of 
 function formulaMaker(names) { 
   var uniqueNames = [];
   var setter = false;
@@ -83,6 +86,15 @@ function formulaMaker(names) {
   formula += '}<>"")';
   
   return formula;
+}
+
+// Deletes student sheets
+function deleter() {
+  var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+  
+  for (var x=8; x<sheets.length; x++) {
+    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
+  }
 }
 
 /* DEPRECATED
