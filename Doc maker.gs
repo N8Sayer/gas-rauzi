@@ -5,11 +5,18 @@ function docOutput() {
   // This chunk gets the fileId for the template, and the output folderID. 
   // Then it grabs the corresponding Template file and Folder and assigns them permanent variables.
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var googleIds = ss.getSheetByName('Settings').getRange('E2:F2').getDisplayValues();
-  var fileId = googleIds[0][0];
-  var folderId = googleIds[0][1];
+  var settings = ss.getSheetByName('Settings').getDataRange().getDisplayValues();
+  var fileId = settings[1][4];
+  var folderId = settings[1][5];
+  var promptTopics = [];
   var template = DriveApp.getFileById(fileId);
   var driveFolder = DriveApp.getFolderById(folderId);
+  
+  settings.forEach(function(row, index) {
+    if (index > 0 && row[0] !== "") {
+      promptTopics.push([row[0],row[1]]);
+    }
+  });
   
   // This section pulls in all the student information from the Roster Tab. It also grabs the current date to get current year.
   var classMates = ss.getSheetByName('Roster').getDataRange().getDisplayValues();  
@@ -55,7 +62,7 @@ function docOutput() {
     var studentName = student[1];
     
     // This section assumes no duplicate entries have made it through the onFormSubmit, and declares the total days of submissions to be = to the length of the sheet.
-    var days = sheetData.length;
+    var days = sheetData.length - 1;
     
     // Replacing all the stand-in text on Pg. 2, and putting in a Page Break after the Table of Contents.
     body.replaceText("\\(FIRST-NAME\\)",studentName.split(" ")[0].toUpperCase());
@@ -63,12 +70,24 @@ function docOutput() {
     body.replaceText("\\(YEAR\\)",year);
     body.replaceText("\\(DAYS\\)",days);
     body.appendPageBreak();
+    
+    
           
     // Here's where each story is added, and the associated stats for that story are stored for the Standings page later.
     sheetData.forEach(function (row,index) {
       // Always skips the header row
-      if (index > 0) {          
-        var prompt = row[1];
+      if (index > 0) {    
+        function promptCheck(promptDay) {
+          var output;
+          promptTopics.forEach(function(promptRow) {
+            if (promptRow[0] == promptDay) {
+              output = promptRow[1];
+            }
+          });
+          return output;
+        }
+        
+        var prompt = promptCheck(row[1]);  
         var title = row[3];
         var story = row[4];
         wordCount += parseInt(row[9]);

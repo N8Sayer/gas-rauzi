@@ -4,7 +4,7 @@ function onFormSubmit(evt) {
   var output = [];
   
   key.forEach(function (row) {
-    if (row[0] == String(evt.namedValues['EMAIL ADDRESS']).toLowerCase()) {
+    if (row[0].toLowerCase() == String(evt.namedValues['EMAIL ADDRESS']).toLowerCase()) {
       var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[3]); 
       var lastRow = sheet.getLastRow();
       var output = outputBuilder(evt.namedValues,sheet,row[3]);

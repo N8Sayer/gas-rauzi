@@ -36,13 +36,14 @@ function outputBuilder(namedValues,sheet,name) {
     output[x] = namedValues[keyValues[0][x]];
   }
   
+  output[15] = output[9];
   output[9] = ['=COUNTA(SPLIT(E:E, " "))+1'];
   output[10] = [String(output[4]).match(/[?!.]\s?/g).length];
-  output[11] = ['=J:J/K:K'];
-  output[12] = output[2];
+  output[11] = ['=ROUND(J:J/K:K)'];
+  output[12] = output[5];
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
-  output = output.slice(0,15);
+  output = output.slice(0,16);
   
   return output;
 }

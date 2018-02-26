@@ -41,7 +41,7 @@ function pageMaster() {
     if (index > 0) {
       if (row[3] == "") {
         if (!ss.getSheetByName(row[2])) {
-          var userSheet = ss.insertSheet(12,{template: template1});
+          var userSheet = ss.insertSheet(ss.getSheets().length+1,{template: template1});
           userSheet.setName(row[2]);
         }
         
