@@ -8,7 +8,7 @@ function onOpen(e) {
     .addSeparator()
     .addItem('Delete Student Pages', 'deleteStudents')
     .addSeparator()
-    .addItem('Restore all Submissions after Delete/Update Pages', 'test_onFormSubmit')
+    .addItem('Restore all Submissions after Delete/Update Pages', 'moveStory')
     .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  
@@ -41,7 +41,7 @@ function pageMaster() {
   
   names.forEach(function(row,index) {
     if (index > 0) {
-      if (row[3] == "") {
+      if (row[2] == "") {
         if (!ss.getSheetByName(row[2])) {
           var userSheet = ss.insertSheet(ss.getSheets().length+1,{template: template1});
           userSheet.setName(row[2]);
@@ -56,12 +56,12 @@ function pageMaster() {
         }
       }
       else {
-        if (!ss.getSheetByName(row[3])) {
+        if (!ss.getSheetByName(row[2])) {
           var userSheet = ss.insertSheet(12,{template: template1});
-          userSheet.setName(row[3]);
+          userSheet.setName(row[2]);
           
-          if (!ss.getSheetByName(row[3] + ' Charts')) {
-            var userCharts = ss.insertSheet(row[3] + ' Charts', 11); 
+          if (!ss.getSheetByName(row[2] + ' Charts')) {
+            var userCharts = ss.insertSheet(row[2] + ' Charts', 11); 
             // Calls the chart making function
             chartGet(userSheet,userCharts);                
           }

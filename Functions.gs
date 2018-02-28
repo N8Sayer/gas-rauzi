@@ -27,24 +27,22 @@ function abbr(range) {
 }*/
 
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(namedValues,sheet,name) {
+function outputBuilder(values,sheet,name) {
   var output = [];
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
-  var keyValues = sheet.getRange('A1:Z1').getDisplayValues();
   
-  for (var x=0; x<keyValues[0].length; x++) {
-    output[x] = namedValues[keyValues[0][x]];
+  for (var x=0; x<values.length; x++) {
+    output[x] = values[x];
   }
   
-  output[15] = output[9];
-  output[9] = ['=COUNTA(SPLIT(E:E, " "))+1'];
-  output[10] = [String(output[4]).match(/[?!.]\s?/g).length];
+  output[9] = ['=COUNTA(SPLIT(E:E, " "))'];
+  output[10] = [output[4].match(/[?!.]\s?/g).length];
   output[11] = ['=ROUND(J:J/K:K)'];
   output[12] = output[5];
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
-  output = output.slice(0,16);
   
+  Logger.log(output);
   return output;
 }
 
@@ -69,19 +67,19 @@ function formulaMaker(names) {
   
   for (var x=1; x<uniqueNames.length; x++) {
     if (x == uniqueNames.length-1) {
-      formula += uniqueNames[x][3] + "!A2:O";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O";
     }
     else {
-      formula += uniqueNames[x][3] + "!A2:O;";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O;";
     }
   }
   formula += '},{';
   for (var y=1; y<uniqueNames.length; y++) {
     if (y == uniqueNames.length-1) {
-      formula += uniqueNames[y][3] + "!A2:A";
+      formula += "'" + uniqueNames[y][2] + "'" + "!A2:A";
     }
     else {
-      formula += uniqueNames[y][3] + "!A2:A;";
+      formula += "'" + uniqueNames[y][2] + "'" + "!A2:A;";
     }
   }
   formula += '}<>"")';

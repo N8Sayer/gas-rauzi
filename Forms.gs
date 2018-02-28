@@ -1,19 +1,28 @@
 function moveStory(storyRow) {
+  var date = new Date();
+  date = Utilities.formatDate(date, 'PST', 'M/d/yyyy h:mm a');
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   var sheetData = sheet.getDataRange().getValues();
+  
+  sheetData.forEach(function(row, index) {
+    var sortCheck = row[10];
+    var userName = row[9];
     
-  sheetData.forEach(function(row) {
-    if (row[10] === "") {
-      var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[9]);
+    if (index > 0 && sortCheck === "") {
+      var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(userName);
       var lastRow = userSheet.getLastRow();
       
-      userSheet.getRange(lastRow + 1,1,1,row.length).setValues([row]);
+      var output = outputBuilder(row,userSheet,userName);
+      var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
+      
+      if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
+        userSheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
+      }
       row[10] = 'Sorted';
     }
   });
   sheet.getDataRange().setValues(sheetData);
-  var date = new Date();
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('H1').setValue('Last Ran on '+date);
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('H1').setValue('Last ran on '+date);
 }
 
 
@@ -24,7 +33,7 @@ function onFormSubmit(evt) {
   
   key.forEach(function (row) {
     if (row[0].toLowerCase() == String(evt.namedValues['EMAIL ADDRESS']).toLowerCase()) {
-      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[3]); 
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[2]); 
       var lastRow = sheet.getLastRow();
       var output = outputBuilder(evt.namedValues,sheet,row[3]);
       var lastEntry = sheet.getRange(lastRow,1,1,output.length).getDisplayValues();

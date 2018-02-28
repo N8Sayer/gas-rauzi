@@ -29,7 +29,7 @@ function docOutput() {
   var setter = false;
   for (var a=1; a<classMates.length; a++) {
     for (var b=0; b<uniqueNames.length; b++) {
-      if (classMates[a][3] == uniqueNames[b][3]) {
+      if (classMates[a][2] == uniqueNames[b][3]) {
         setter = true;
         b = uniqueNames.length;
       }
