@@ -8,6 +8,8 @@ function onOpen(e) {
     .addSeparator()
     .addItem('Delete Student Pages', 'deleteStudents')
     .addSeparator()
+    .addItem('Restore all Submissions after Delete/Update Pages', 'test_onFormSubmit')
+    .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  
 }
@@ -24,9 +26,9 @@ function deleteStudents() {
 // Create the onFormSubmit trigger.
 function triggers() {
   var sheet = SpreadsheetApp.getActive();
-  ScriptApp.newTrigger("onFormSubmit")
-   .forSpreadsheet(sheet)
-   .onFormSubmit()
+  ScriptApp.newTrigger("moveStory")
+   .timeBased()
+   .everyMinutes(1)
    .create();
 }
 

@@ -1,3 +1,22 @@
+function moveStory(storyRow) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
+  var sheetData = sheet.getDataRange().getValues();
+    
+  sheetData.forEach(function(row) {
+    if (row[10] === "") {
+      var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(row[9]);
+      var lastRow = userSheet.getLastRow();
+      
+      userSheet.getRange(lastRow + 1,1,1,row.length).setValues([row]);
+      row[10] = 'Sorted';
+    }
+  });
+  sheet.getDataRange().setValues(sheetData);
+  var date = new Date();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('H1').setValue('Last Ran on '+date);
+}
+
+
 // This is just a specialized onFormSubmit which sorts incoming submissions to the appropriate student page, and blocks duplicate entries. 
 function onFormSubmit(evt) {
   var key = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getDisplayValues();
@@ -26,7 +45,7 @@ function onFormSubmit(evt) {
  * See https://developers.google.com/apps-script/guides/triggers/events#google_sheets_events
  */
 function test_onFormSubmit() {
-  var dataRange = SpreadsheetApp.getActiveSheet().getDataRange();
+  var dataRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response').getDataRange();
   var data = dataRange.getValues();
   var headers = data[0];
   // Start at row 1, skipping headers in row 0
