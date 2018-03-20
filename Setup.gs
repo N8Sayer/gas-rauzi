@@ -8,7 +8,7 @@ function onOpen(e) {
     .addSeparator()
     .addItem('Delete Student Pages', 'deleteStudents')
     .addSeparator()
-    .addItem('Restore all Submissions after Delete/Update Pages', 'moveStory')
+    .addItem('Restore All Submissions after Delete/Update Pages', 'moveStory')
     .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  

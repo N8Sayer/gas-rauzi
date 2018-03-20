@@ -42,7 +42,7 @@ function outputBuilder(values,sheet,name) {
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
   
-  Logger.log(output);
+//  Logger.log(output);
   return output;
 }
 
@@ -94,6 +94,38 @@ function deleter() {
   for (var x=8; x<sheets.length; x++) {
     SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
   }
+}
+
+// Email when form is submitted
+function emailUpdate(userRow) {
+  var sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
+  
+  var date = userRow[0];
+  var day = userRow[1];
+  var userName = userRow[9];  
+  var subject = '40 Days Workout for ' + sheetName + ' -- ' + day + ' -- ' + userName;
+  
+  var prompt = userRow[2];
+  var title = userRow[3];
+  var textBody = userRow[4].replace(/\n/g, '<br>');
+  var howLong = userRow[5];
+  var comments = userRow[8];
+  var body = 
+    '<strong>' + day + ':</strong> ' + prompt + '<br><br>' + 
+    '<strong>Post this?</strong> Go ahead<br><br>' + 
+    '<strong>By:</strong> ' + userName + '<hr>' + 
+    '<strong>' + title + '</strong><br><br>' + 
+    textBody + '<br>' +
+    '<hr>' + 
+    '<strong>How long?</strong> ' + howLong + ' minutes<br><br>' +
+    '<strong>Comments:</strong> ' + comments;    
+             
+    MailApp.sendEmail({
+      to: 'russ@birdsinabarrel.com', 
+//      to: 'forcelord50@gmail.com',
+      subject: subject, 
+      htmlBody: body
+    });
 }
 
 /* DEPRECATED
