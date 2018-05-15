@@ -1,10 +1,4 @@
-function test() {
-  var row = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response').getRange('A86:K86');
-  var displayValues = row.getDisplayValues()[0];
-  
-  emailUpdate(displayValues);
-}
-function moveStory() {
+function moveStory(storyRow) {
   var date = new Date();
   date = Utilities.formatDate(date, 'PST', 'M/d/yyyy h:mm a');
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
@@ -12,22 +6,21 @@ function moveStory() {
   
   sheetData.forEach(function(row, index) {
     var sortCheck = row[10];
-    row[9] = row[9].toUpperCase();
     var userName = row[9];
     
     if (index > 0 && sortCheck === "") {
+      Logger.log(userName);
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(userName);
-      var lastRow = userSheet.getLastRow();
-      var output = outputBuilder(row,userSheet,userName);
-      var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
-      
-      if (lastEntry[0][1] !== output[1] && lastEntry[0][4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
-        userSheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
-      }
-      
-      row[10] = 'Sorted';
-      if (row[7] === '') {
-        emailUpdate(row);
+      if (userSheet) {
+        var lastRow = userSheet.getLastRow();
+        
+        var output = outputBuilder(row,userSheet,userName);
+        var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
+        
+        if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
+          userSheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
+        }
+        row[10] = 'Sorted';
       }
     }
   });
