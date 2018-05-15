@@ -2,13 +2,13 @@
 function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Setup Menu')
-    .addItem('Update Student Pages After Roster Change', 'pageMaster')
+    .addItem('Add Student Pages After Roster Change', 'pageMaster')
     .addSeparator()
     .addItem('Install Triggers (Run Once)', 'triggers')
     .addSeparator()
-    .addItem('Delete Student Pages', 'deleteStudents')
+    .addItem('Delete All Student Pages', 'deleteStudents')
     .addSeparator()
-    .addItem('Restore All Submissions after Delete/Update Pages', 'moveStory')
+    .addItem('Restore All Submissions after Delete/Add Pages', 'moveStory')
     .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  
@@ -28,8 +28,13 @@ function triggers() {
   var sheet = SpreadsheetApp.getActive();
   ScriptApp.newTrigger("moveStory")
    .timeBased()
-   .everyMinutes(1)
+   .everyMinutes(10)
    .create();
+  ScriptApp.newTrigger("dailyEmailSummary")
+    .timeBased()
+    .everyDays(1)
+    .atHour(2)
+    .create();
 }
 
 // This function creates the pages for each student based off of the info from the Roster, and the Templates. 

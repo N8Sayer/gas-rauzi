@@ -25,11 +25,15 @@ function abbr(range) {
   });  
   return range;
 }*/
-
+function myFunction() {
+  var triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function(trigger) {
+    ScriptApp.deleteTrigger(trigger);    
+  });
+}
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values,sheet,name) {
+function outputBuilder(values,name) {
   var output = [];
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   
   for (var x=0; x<values.length; x++) {
     output[x] = values[x];
@@ -42,7 +46,7 @@ function outputBuilder(values,sheet,name) {
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
   
-  Logger.log(output);
+//  Logger.log(output);
   return output;
 }
 
@@ -94,6 +98,82 @@ function deleter() {
   for (var x=8; x<sheets.length; x++) {
     SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
   }
+}
+
+// Email when form is submitted
+function emailUpdate(userRow) {
+  var sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
+  
+  var date = userRow[0];
+  var day = userRow[1];
+  var userName = userRow[9];  
+  var subject = '40 Days Workout for ' + sheetName + ' -- ' + day + ' -- ' + userName;
+  
+  var prompt = userRow[2];
+  var title = userRow[3];
+  var textBody = userRow[4].replace(/\n/g, '<br>');
+  var howLong = userRow[5];
+  var comments = userRow[8];
+  var body = 
+    '<strong>' + day + ':</strong> ' + prompt + '<br><br>' + 
+    '<strong>Post this?</strong> Go ahead<br><br>' + 
+    '<strong>By:</strong> ' + userName + '<hr>' + 
+    '<strong>' + title + '</strong><br><br>' + 
+    textBody + '<br>' +
+    '<hr>' + 
+    '<strong>How long?</strong> ' + howLong + ' minutes<br><br>' +
+    '<strong>Comments:</strong> ' + comments;    
+             
+    MailApp.sendEmail({
+      to: 'russ@birdsinabarrel.com', 
+//      to: 'forcelord50@gmail.com',
+      subject: subject, 
+      htmlBody: body
+    });
+}
+
+function dailyEmailSummary() {
+  var sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
+  var sheetData = sheet.getDataRange().getDisplayValues();
+  var today = new Date();
+  today.setDate(today.getDate() - 1);
+  today.setHours(0,0,0);
+  var body = '';
+  var day;
+  
+  sheetData.forEach(function(sheetRow) {
+    if (new Date(sheetRow[0]) > today) {
+      day = sheetRow[1];
+      var userName = sheetRow[9];  
+      
+      var prompt = sheetRow[2];
+      var title = sheetRow[3];
+      var textBody = sheetRow[4].replace(/\n/g, '<br>');
+      var howLong = sheetRow[5];
+      var post = sheetRow[7];
+      var comments = sheetRow[8];
+      if (post == '') {
+        post = 'Go ahead';
+      }
+      body += 
+        '<hr><strong>' + day + ':</strong> ' + prompt + '<br><br>' + 
+        '<strong>Post this?</strong> ' + post + '<br><br>' + 
+        '<strong>By:</strong> ' + userName + '<br><br>' + 
+        '<strong>' + title + '</strong><br><br>' + 
+        textBody + '<br><br>' +
+        '<strong>How long?</strong> ' + howLong + ' minutes<br><br>' +
+        '<strong>Comments:</strong> ' + comments + '<br><hr><br>';   
+    }
+  });
+  var subject = '40 Days Summary for ' + day + ' - ' + sheetName;
+  
+  MailApp.sendEmail({
+    to: 'editor@birdsinabarrel.com', 
+//      to: 'forcelord50@gmail.com',
+    subject: subject, 
+    htmlBody: body
+  });
 }
 
 /* DEPRECATED
