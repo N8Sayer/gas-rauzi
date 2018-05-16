@@ -13,6 +13,7 @@ function moveStory(storyRow) {
     if (index > 0 && sortCheck === "") {
       var parsedUserName = userNameCheck(rosterData,userName);
       var outputName = typeof parsedUserName === 'object' ? parsedUserName[1] : parsedUserName;
+      row[9] = outputName;
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
         var lastRow = userSheet.getLastRow();
