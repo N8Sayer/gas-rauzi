@@ -1,39 +1,7 @@
-/* Deprecated, converts student names to abbreviations
-function abbr(range) {
-  for (var y=0; y<range.length; y++) {
-    if (range[y] == "") {
-      range.length = y;
-    }
-  }  
-  for (var x=0; x<range.length; x++) {
-    var splits = String(range[x]).split(" ");
-    if (splits.length > 0 && range[x] !== "") {
-      var newAbbr = splits[0].slice(0,1) + splits[1].slice(0,1);
-    }
-    range[x] = newAbbr;
-  }  
-  var count = 2;
-  range.forEach(function (name,index) {
-    for (var z=index+1; z<range.length; z++) {
-      if (name == range[z]) {
-        range[index] = name + 1;
-        range[z] += count;
-        count++;
-      }
-    }
-    count = 2;
-  });  
-  return range;
-}*/
-function myFunction() {
-  var triggers = ScriptApp.getProjectTriggers();
-  triggers.forEach(function(trigger) {
-    ScriptApp.deleteTrigger(trigger);    
-  });
-}
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values,name) {
+function outputBuilder(values,sheet,name) {
   var output = [];
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   
   for (var x=0; x<values.length; x++) {
     output[x] = values[x];
@@ -46,7 +14,7 @@ function outputBuilder(values,name) {
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
   
-//  Logger.log(output);
+  Logger.log(output);
   return output;
 }
 
@@ -101,7 +69,7 @@ function deleter() {
 }
 
 // Email when form is submitted
-function emailUpdate(userRow) {
+function buildEmail(userRow,dailyEmail) {
   var sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
   
   var date = userRow[0];
@@ -113,104 +81,103 @@ function emailUpdate(userRow) {
   var title = userRow[3];
   var textBody = userRow[4].replace(/\n/g, '<br>');
   var howLong = userRow[5];
+  var postThis = userRow[7] === '' ? 'Go Ahead' : userRow[7];
   var comments = userRow[8];
   var body = 
     '<strong>' + day + ':</strong> ' + prompt + '<br><br>' + 
-    '<strong>Post this?</strong> Go ahead<br><br>' + 
-    '<strong>By:</strong> ' + userName + '<hr>' + 
+    '<strong>Post this?</strong> ' + postThis + '<br><br>' +
+    '<strong>By:</strong> ' + userName;
+  if (!dailyEmail) {
+    body += '<hr>';
+  }
+  else {
+    body += '<br><br>';
+  }
+  body += 
     '<strong>' + title + '</strong><br><br>' + 
-    textBody + '<br>' +
-    '<hr>' + 
+    textBody + '<br>';
+  if (!dailyEmail) {
+    body +='<hr>';
+  }
+  else {
+    body += '<br>';
+  }
+  body +=
     '<strong>How long?</strong> ' + howLong + ' minutes<br><br>' +
     '<strong>Comments:</strong> ' + comments;    
-             
-    MailApp.sendEmail({
-      to: 'russ@birdsinabarrel.com', 
-//      to: 'forcelord50@gmail.com',
-      subject: subject, 
-      htmlBody: body
-    });
+        
+  var output = {
+    subject: subject,
+    body: body
+  };
+  return output;
 }
 
-function dailyEmailSummary() {
-  var sheetName = SpreadsheetApp.getActiveSpreadsheet().getName();
+function dailyEmailUpdate() {
+  var now = new Date();
+  var dayStart = new Date(now.getYear(),now.getMonth(),now.getDate()-1,2,0,0);
+  var dayEnd = new Date(now.getYear(),now.getMonth(),now.getDate(),2,0,0);
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
-  var sheetData = sheet.getDataRange().getDisplayValues();
-  var today = new Date();
-  today.setDate(today.getDate() - 1);
-  today.setHours(0,0,0);
-  var body = '';
-  var day;
-  
-  sheetData.forEach(function(sheetRow) {
-    if (new Date(sheetRow[0]) > today) {
-      day = sheetRow[1];
-      var userName = sheetRow[9];  
-      
-      var prompt = sheetRow[2];
-      var title = sheetRow[3];
-      var textBody = sheetRow[4].replace(/\n/g, '<br>');
-      var howLong = sheetRow[5];
-      var post = sheetRow[7];
-      var comments = sheetRow[8];
-      if (post == '') {
-        post = 'Go ahead';
+  var sheetData = sheet.getDataRange().getValues();
+  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
+  var rosterData = roster.getDataRange().getValues();
+  var dayData = [];
+  var incorrectNames = [];
+  var dayName;
+  sheetData.forEach(function(row,index) {
+    var dateTime = new Date(row[0]);
+    var userName = row[9];
+    if (index > 0 && dateTime.getTime() > dayStart.getTime() && dateTime.getTime() < dayEnd.getTime()) {
+      var emailData = buildEmail(row,'daily');
+      dayData.push(emailData.body);
+      if (!dayName) {
+        dayName = row[1];
       }
-      body += 
-        '<hr><strong>' + day + ':</strong> ' + prompt + '<br><br>' + 
-        '<strong>Post this?</strong> ' + post + '<br><br>' + 
-        '<strong>By:</strong> ' + userName + '<br><br>' + 
-        '<strong>' + title + '</strong><br><br>' + 
-        textBody + '<br><br>' +
-        '<strong>How long?</strong> ' + howLong + ' minutes<br><br>' +
-        '<strong>Comments:</strong> ' + comments + '<br><hr><br>';   
+      var nameCheck = userNameCheck(rosterData,userName);
+      if (nameCheck !== userName) {
+        incorrectNames.push('Row('+(index+1)+'): ' + nameCheck);
+      }
     }
   });
-  var subject = '40 Days Summary for ' + day + ' - ' + sheetName;
-  
+  var body = '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
+  body += '<h3>Incorrect Submissions</h3><br>' + incorrectNames.join('<br>');
+  sendEmail('forcelord50@gmail.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
+}
+
+function sendEmail(recipients,subject,body) {
   MailApp.sendEmail({
-    to: 'editor@birdsinabarrel.com', 
-//      to: 'forcelord50@gmail.com',
+    to: recipients, 
+    replyTo: 'editor@birdsinabarrel.com',
     subject: subject, 
     htmlBody: body
   });
+  return 'Email sent';    
 }
 
-/* DEPRECATED
-function sorter() {
-  var names = ['SJ','RK','RR','CF','DT','JG','GS','CG'];
-  var ss = SpreadsheetApp.getActiveSpreadsheet(); 
-  var data = ss.getSheetByName('MAIN').getDataRange().getDisplayValues();
-  
-  names.forEach(function (name) {
-    Logger.log(name);
-    var insert = [];
-    data.forEach(function (row) {
-      if (row[13] == name) {
-        insert.push(row);
-      }
-    });    
-    ss.getSheetByName(name).getRange(2,1,insert.length,insert[0].length).setValues(insert);
+function userNameCheck(rosterData,name) {
+  var output;
+  lowerName = name.toLowerCase();
+  rosterData.forEach(function(row) {
+    var rosterName = row[2].toLowerCase();
+    if (lowerName == rosterName) {
+      output = name;
+    }
+    else if (row[0].toLowerCase().search(lowerName) !== -1) {
+      output = [name,row[2]];
+    }
+  });
+  if (!output) {
+    output = name + ': Not Found';
+  }
+  return output;
+}
+
+function test() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
+  var sheetData = sheet.getDataRange().getValues();
+  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
+  var rosterData = roster.getDataRange().getValues();
+  sheetData.forEach(function(row) {
+    Logger.log(userNameCheck(rosterData,row[9]));
   });
 }
-
-function chartTest() {
-  var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('C G Charts'); 
-  var oldChart = userSheet.getCharts();
-  userSheet.removeChart(oldChart[0]);
-  var chart = userSheet.newChart()
-              .setChartType(Charts.ChartType.AREA)
-              .addRange(SpreadsheetApp.getActiveSpreadsheet().getSheetByName('C G').getRange("A2:A"))
-              .addRange(SpreadsheetApp.getActiveSpreadsheet().getSheetByName('C G').getRange("I2:I"))
-              .setPosition(1,1,0,0)
-              .setOption('title', 'Daily Average Word Count Over Time')
-              .setOption('legend',{position: 'none'})
-              .setOption('selectionMode','multiple')
-              .setOption('series',[{ color: '#DC8A77' }])
-  .setOption('trendlines',[{ type: 'linear' }])
-  .setOption('dataLabels',[{  }])
-  .setOption('hAxis.gridlines.count', 40)
-  .setOption('annotations.datum', [{ color: '#DC8A77'}])
-              .build();
-  userSheet.insertChart(chart);
-} */

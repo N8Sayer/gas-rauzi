@@ -2,13 +2,13 @@
 function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Setup Menu')
-    .addItem('Add Student Pages After Roster Change', 'pageMaster')
+    .addItem('Update Student Pages After Roster Change', 'pageMaster')
     .addSeparator()
     .addItem('Install Triggers (Run Once)', 'triggers')
     .addSeparator()
-    .addItem('Delete All Student Pages', 'deleteStudents')
+    .addItem('Delete Student Pages', 'deleteStudents')
     .addSeparator()
-    .addItem('Restore All Submissions after Delete/Add Pages', 'moveStory')
+    .addItem('Restore All Submissions after Delete/Update Pages', 'moveStory')
     .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
     .addToUi();  
@@ -28,12 +28,12 @@ function triggers() {
   var sheet = SpreadsheetApp.getActive();
   ScriptApp.newTrigger("moveStory")
    .timeBased()
-   .everyMinutes(10)
+   .everyMinutes(1)
    .create();
-  ScriptApp.newTrigger("dailyEmailSummary")
+  ScriptApp.newTrigger("dailyEmailUpdate")
     .timeBased()
-    .everyDays(1)
     .atHour(2)
+    .everyDays(1)
     .create();
 }
 
