@@ -135,25 +135,18 @@ function dailyEmailUpdate() {
       }
       var nameCheck = userNameCheck(rosterData,userName);
       if (nameCheck !== userName) {
-        var displayInfo = 'Row('+(index+1)+'): ';
-        if (typeof nameCheck === 'object') {
-          displayInfo += 'Incorrect Submitted Username: ' + nameCheck[0] + ', Corrected Username: ' + nameCheck[1];
-        } else {
-          displayInfo += nameCheck;
-        }
-        incorrectNames.push(displayInfo);
+        incorrectNames.push('Row('+(index+1)+'): ' + nameCheck);
       }
     }
   });
-  var body = '<h3>Incorrect Submissions</h3>' + incorrectNames.join('<br>') + '<br><br>';
-  body += '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
-  sendEmail('forcelord50@gmail.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
+  var body = '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
+  body += '<h3>Incorrect Submissions</h3><br>' + incorrectNames.join('<br>');
+  sendEmail('editor@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
 function sendEmail(recipients,subject,body) {
   MailApp.sendEmail({
     to: recipients, 
-    name: 'editor@birdsinabarrel.com',
     replyTo: 'editor@birdsinabarrel.com',
     subject: subject, 
     htmlBody: body
@@ -174,7 +167,7 @@ function userNameCheck(rosterData,name) {
     }
   });
   if (!output) {
-    output = 'Not Found: ' + name;
+    output = name + ': Not Found';
   }
   return output;
 }

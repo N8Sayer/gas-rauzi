@@ -28,7 +28,7 @@ function triggers() {
   var sheet = SpreadsheetApp.getActive();
   ScriptApp.newTrigger("moveStory")
    .timeBased()
-   .everyMinutes(15)
+   .everyMinutes(1)
    .create();
   ScriptApp.newTrigger("dailyEmailUpdate")
     .timeBased()
