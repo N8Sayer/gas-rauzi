@@ -135,18 +135,25 @@ function dailyEmailUpdate() {
       }
       var nameCheck = userNameCheck(rosterData,userName);
       if (nameCheck !== userName) {
-        incorrectNames.push('Row('+(index+1)+'): ' + nameCheck);
+        var displayInfo = 'Row('+(index+1)+'): ';
+        if (typeof nameCheck === 'object') {
+          displayInfo += 'Incorrect Submitted Username: ' + nameCheck[0] + ', Corrected Username: ' + nameCheck[1];
+        } else {
+          displayInfo += nameCheck;
+        }
+        incorrectNames.push(displayInfo);
       }
     }
   });
-  var body = '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
-  body += '<h3>Incorrect Submissions</h3><br>' + incorrectNames.join('<br>');
+  var body = '<h3>Incorrect Submissions</h3>' + incorrectNames.join('<br>') + '<br><br>';
+  body += '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
   sendEmail('editor@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
 function sendEmail(recipients,subject,body) {
   MailApp.sendEmail({
     to: recipients, 
+    name: 'editor@birdsinabarrel.com',
     replyTo: 'editor@birdsinabarrel.com',
     subject: subject, 
     htmlBody: body
@@ -167,7 +174,7 @@ function userNameCheck(rosterData,name) {
     }
   });
   if (!output) {
-    output = name + ': Not Found';
+    output = 'Not Found: ' + name;
   }
   return output;
 }
