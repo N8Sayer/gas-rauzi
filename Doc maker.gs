@@ -29,7 +29,7 @@ function docOutput() {
   var setter = false;
   for (var a=1; a<classMates.length; a++) {
     for (var b=0; b<uniqueNames.length; b++) {
-      if (classMates[a][2] == uniqueNames[b][3]) {
+      if (classMates[a][2] == uniqueNames[b][2]) {
         setter = true;
         b = uniqueNames.length;
       }
@@ -49,16 +49,11 @@ function docOutput() {
     var body = doc.getBody();
     
     // Declare a ton of empty variables for accessings later when creating the Standings page
-    var slowCount = 0;
-    var slowTotal = 0;
-    var middleCount = 0;
-    var middleTotal = 0;
-    var fireCount = 0;
-    var fireTotal = 0;
     var wordCount = 0;
+    var timeCount = 0;
     
     // Get the current student's sheet, and declare student name
-    var sheetData = ss.getSheetByName(student[3]).getDataRange().getDisplayValues();
+    var sheetData = ss.getSheetByName(student[2]).getDataRange().getDisplayValues();
     var studentName = student[1];
     
     // This section assumes no duplicate entries have made it through the onFormSubmit, and declares the total days of submissions to be = to the length of the sheet.
@@ -91,21 +86,7 @@ function docOutput() {
         var title = row[3];
         var story = row[4];
         wordCount += parseInt(row[9]);
-        
-        switch (row[6]) {
-          case "Slow slog":
-            slowCount++;
-            slowTotal += parseInt(row[13]);
-            break;
-          case "Fair to middling": 
-            middleCount++;
-            middleTotal += parseInt(row[13]);
-            break;
-          case "Fingers on fire":
-            fireCount++;
-            fireTotal += parseInt(row[13]);
-            break;
-        }
+        timeCount += parseInt(row[10],10);
         
         // This section is all to stylize the Prompt header above each story.
         var parStyle = {};
@@ -137,10 +118,7 @@ function docOutput() {
     var text = 'DAYS: ' + days + ' OF 40\n'+
       'AVERAGE WRITE: '+ Math.round(average) +' WORDS\n'+
       'TOTAL WORD COUNT: '+ wordCount + '\n'+
-      'WRITING SPEEDS:\n'+
-      'SLOW: '+ Math.round(slowTotal/slowCount) +' WPM\n' +
-      'MIDDLING: '+ Math.round(middleTotal/middleCount) +' WPM\n' +
-      'FINGERS ON FIRE: '+ Math.round(fireTotal/fireCount) +' WPM';
+      'AVERAGE WPM :' + Math.round(wordCount/timeCount);
     
     var style = {};
       style[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
@@ -148,6 +126,6 @@ function docOutput() {
       style[DocumentApp.Attribute.BOLD] = true;
       style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1F3864';
     
-    body.appendParagraph(text).setAttributes(style);    
+    body.appendParagraph(text).setAttributes(style);  
   });
 }

@@ -17,7 +17,6 @@ function moveStory(storyRow) {
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
         var lastRow = userSheet.getLastRow();
-        
         var output = outputBuilder(row,userSheet,userName);
         var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
         

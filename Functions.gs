@@ -8,7 +8,7 @@ function outputBuilder(values,sheet,name) {
   }
   
   output[9] = ['=COUNTA(SPLIT(E:E, " "))'];
-  output[10] = [output[4].match(/[?!.]\s?/g).length];
+  output[10] = output[4].match(/[?!.]\s?/g) ? [output[4].match(/[?!.]\s?/g).length] : 0;
   output[11] = ['=ROUND(J:J/K:K)'];
   output[12] = output[5];
   output[13] = ['=J:J/M:M'];
