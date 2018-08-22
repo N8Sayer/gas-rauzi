@@ -16,6 +16,8 @@ function moveStory(storyRow) {
       row[9] = outputName;
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
+        var lock = LockService.getScriptLock();
+        lock.waitLock(30000);
         var lastRow = userSheet.getLastRow();
         var output = outputBuilder(row,outputName);
         var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
@@ -29,6 +31,7 @@ function moveStory(storyRow) {
           sendEmail('russ@birdsinabarrel.com',emailData.subject,emailData.body);
         }
         SpreadsheetApp.flush();
+        lock.releaseLock();
       }
     }
   });
