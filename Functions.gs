@@ -1,19 +1,15 @@
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values,sheet,name) {
-  var output = [];
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
-  
+function outputBuilder(values,name) {
+  var output = [];  
   for (var x=0; x<values.length; x++) {
     output[x] = values[x];
-  }
-  
+  }  
   output[9] = ['=COUNTA(SPLIT(E:E, " "))'];
   output[10] = output[4].match(/[?!.]\s?/g) ? [output[4].match(/[?!.]\s?/g).length] : 0;
   output[11] = ['=ROUND(J:J/K:K)'];
   output[12] = output[5];
   output[13] = ['=J:J/M:M'];
-  output[14] = [name];
-  
+  output[14] = [name];  
   Logger.log(output);
   return output;
 }

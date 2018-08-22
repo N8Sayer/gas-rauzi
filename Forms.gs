@@ -17,7 +17,7 @@ function moveStory(storyRow) {
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
         var lastRow = userSheet.getLastRow();
-        var output = outputBuilder(row,userSheet,userName);
+        var output = outputBuilder(row,outputName);
         var lastEntry = userSheet.getRange(lastRow,1,1,output.length).getDisplayValues();
         
         if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
@@ -28,6 +28,7 @@ function moveStory(storyRow) {
           var emailData = buildEmail(row);          
           sendEmail('russ@birdsinabarrel.com',emailData.subject,emailData.body);
         }
+        SpreadsheetApp.flush();
       }
     }
   });
