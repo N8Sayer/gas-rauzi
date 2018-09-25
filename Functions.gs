@@ -1,5 +1,7 @@
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values,name) {
+function outputBuilder(values,name,row) {
+  var prevRow = row;
+  row = row + 1;
   var output = [];  
   for (var x=0; x<values.length; x++) {
     output[x] = values[x];
@@ -9,7 +11,12 @@ function outputBuilder(values,name) {
   output[11] = ['=ROUND(J:J/K:K)'];
   output[12] = output[5];
   output[13] = ['=J:J/M:M'];
-  output[14] = [name];  
+  output[14] = [name];
+  if (row === 2) {
+    output[15] = [name];
+  } else {
+    output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + row + ', "m/d/yyyy"))), "", "' + name + '")'];    
+  }
   Logger.log(output);
   return output;
 }
@@ -35,10 +42,10 @@ function formulaMaker(names) {
   
   for (var x=1; x<uniqueNames.length; x++) {
     if (x == uniqueNames.length-1) {
-      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:P";
     }
     else {
-      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O;";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:P;";
     }
   }
   formula += '},{';
@@ -144,7 +151,6 @@ function dailyEmailUpdate() {
   var body = '<h3>Incorrect Submissions</h3>' + incorrectNames.join('<br>') + '<br><br>';
   body += '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
   sendEmail('editor@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
-  sendEmail('russ@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
 function sendEmail(recipients,subject,body) {
