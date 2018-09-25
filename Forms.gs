@@ -1,8 +1,9 @@
-function moveStory(storyRow) {
+function moveStory() {
   var date = new Date();
   date = Utilities.formatDate(date, 'PST', 'M/d/yyyy h:mm a');
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   var sheetData = sheet.getDataRange().getValues();
+  console.log(sheetData);
   var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
   var rosterData = roster.getDataRange().getValues();
   
