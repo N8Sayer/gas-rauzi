@@ -46,17 +46,18 @@ function pageMaster() {
   var names = ss.getSheetByName('Roster').getDataRange().getDisplayValues();
   
   names.forEach(function(row,index) {
+    var username = row[2];
     if (index > 0) {
-      if (row[2] !== "") {
-        if (!ss.getSheetByName(row[2])) {
+      if (username !== "") {
+        if (!ss.getSheetByName(username)) {
           var userSheet = ss.insertSheet(ss.getSheets().length + 1, { template: template1 });
-          userSheet.setName(row[2]);
+          userSheet.setName(username);
         }
-        if (!ss.getSheetByName(row[2] + ' Charts')) {
+        if (!ss.getSheetByName(username + ' Charts')) {
           var userCharts = ss.insertSheet(ss.getSheets().length + 1, { template: template2});
-          userCharts.setName(row[2] + ' Charts');
+          userCharts.setName(username + ' Charts');
           // Calls the chart making function
-          chartGet(userSheet,userCharts);                
+          chartGet(userSheet, userCharts, username);                
         }
       }
     }
@@ -68,16 +69,28 @@ function pageMaster() {
 }
 
 // Calls the function which makes the individual user charts
-function chartGet(dataPage, chartPage) {
+function chartGet(dataPage, chartPage, username) {
   var chartOrders = [['P2:P50'],['O2:O50','J2:J50'],['O2:O50','J2:J50'],['B2:B50','J2:J50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
   var charts = chartPage.getCharts();
   
   for (var x=0; x<charts.length; x++) {
     var newChart = charts[x].modify();
-    newChart.removeRange(chartPage.getRange('A1')).setOption('width', 600);    
+    newChart.removeRange(chartPage.getRange('A1')); 
     chartOrders[x].forEach(function(range) {
       newChart.addRange(dataPage.getRange(range));                            
     });          
     chartPage.updateChart(newChart.build());
   }
+  chartPage.getRange('C2').setValue(username + ' Dashboard');
+  
+  var formulas = [
+    ['=IF(ISNA(AVERAGE(' + username + '!J2:J)), AVERAGE(' + username + '!J2:J), 0)'],
+    [''],
+    ['Total Writing Time:'],
+    ['=IF(ISNA(SUM(' + username + '!M2:M)), SUM(' + username + '!M2:M), 0)'],
+    [''],
+    ['Total Word Count:'],
+    ['=IF(ISNA(SUM(' + username + '!J2:J)), SUM(' + username + '!J2:J), 0)']
+    ];
+  chartPage.getRange('G13:G19').setValues(formulas);
 }
