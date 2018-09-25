@@ -84,13 +84,13 @@ function chartGet(dataPage, chartPage, username) {
   chartPage.getRange('C2').setValue(username + ' Dashboard');
   
   var formulas = [
-    ['=IF(ISNA(AVERAGE(' + username + '!J2:J)), AVERAGE(' + username + '!J2:J), 0)'],
+    ['=IF(ISNA(AVERAGE(\'' + username + '\'!J2:J)), AVERAGE(\'' + username + '\'!J2:J), 0)'],
     [''],
     ['Total Writing Time:'],
-    ['=IF(ISNA(SUM(' + username + '!M2:M)), SUM(' + username + '!M2:M), 0)'],
+    ['=IF(ISNA(SUM(\'' + username + '\'!M2:M)), SUM(\'' + username + '\'!M2:M), 0)'],
     [''],
     ['Total Word Count:'],
-    ['=IF(ISNA(SUM(' + username + '!J2:J)), SUM(' + username + '!J2:J), 0)']
+    ['=IF(ISNA(SUM(\'' + username + '\'!J2:J)), SUM(\'' + username + '\'!J2:J), 0)']
     ];
   chartPage.getRange('G13:G19').setValues(formulas);
 }

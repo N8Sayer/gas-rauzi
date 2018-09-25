@@ -65,10 +65,13 @@ function formulaMaker(names) {
 // Deletes student sheets
 function deleter() {
   var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','Main','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];
   
-  for (var x=8; x<sheets.length; x++) {
-    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
-  }
+  sheets.forEach(function(sheet) {
+    if (savedSheets.indexOf(sheet.getName()) === -1) {
+      SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
+    }
+  });
 }
 
 // Email when form is submitted
