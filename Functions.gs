@@ -151,6 +151,7 @@ function dailyEmailUpdate() {
   var body = '<h3>Incorrect Submissions</h3>' + incorrectNames.join('<br>') + '<br><br>';
   body += '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
   sendEmail('editor@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
+  sendEmail('russ@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
 function sendEmail(recipients,subject,body) {

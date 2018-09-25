@@ -83,7 +83,7 @@ function pageMaster() {
 // Calls the function which makes the individual user charts
 function chartGet(dataPage,chartPage) {
   var charts = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Template - Individual Charts').getCharts(); 
-  var chartOrders = [['P2:P1095'],['O2:O1095','J2:J1095'],['O2:O1095','J2:J1095'],['B2:B1095','J2:J1095'],['O2:O1095','N2:N1095'],['A2:A1095','J2:J1095']];
+  var chartOrders = [['P2:P50'],['O2:O50','J2:J50'],['O2:O50','J2:J50'],['B2:B50','J2:J50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
   
   for (var x=0; x<charts.length; x++) {
     var newChart = charts[x].modify();

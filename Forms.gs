@@ -24,11 +24,14 @@ function moveStory(storyRow) {
         
         if (lastEntry[1] !== output[1] && lastEntry[4] !== output[4]) { // This line blocks duplicate submissions from populating to the student pages
           userSheet.getRange(lastRow+1,1,1,output.length).setValues([output]);
+          row[10] = 'Sorted';
+        } else {
+          row[10] = 'Duplicate';
         }
-        row[10] = 'Sorted';
         if (row[7] === '') {
-          var emailData = buildEmail(row);          
-          sendEmail('russ@birdsinabarrel.com',emailData.subject,emailData.body);
+          // var emailData = buildEmail(row); 
+          var emailBody = row[4] + '<br>' + ' — ' + row[9];
+          sendEmail('editor1060.magpie@blogger.com',row[3],emailData.body);
         }
         SpreadsheetApp.flush();
         lock.releaseLock();
