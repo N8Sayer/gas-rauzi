@@ -16,11 +16,15 @@ function onOpen(e) {
 
 // When students drop out, sometimes it's necessary to run this before updating the roster.
 // It really depends on what is being changed on the roster.
-function deleteStudents() {
-  var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();  
-  for (var x=8; x<sheets.length; x++) {
-    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheets[x]);
-  }
+function deleteStudents() {  
+  var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','Main','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];
+  
+  sheets.forEach(function(sheet) {
+    if (savedSheets.indexOf(sheet.getName()) === -1) {
+      SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
+    }
+  });
 }
 
 // Create the onFormSubmit trigger.

@@ -14,8 +14,10 @@ function moveStory(storyRow) {
       var parsedUserName = userNameCheck(rosterData,userName);
       var outputName = typeof parsedUserName === 'object' ? parsedUserName[1] : parsedUserName;
       row[9] = outputName;
+        console.log(outputName);
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
+        console.log(userSheet.getName());
         var lock = LockService.getScriptLock();
         lock.waitLock(30000);
         var lastRow = userSheet.getLastRow();
