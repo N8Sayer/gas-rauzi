@@ -15,10 +15,8 @@ function moveStory() {
       var parsedUserName = userNameCheck(rosterData,userName);
       var outputName = typeof parsedUserName === 'object' ? parsedUserName[1] : parsedUserName;
       row[9] = outputName;
-        console.log(outputName);
       var userSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(outputName);
       if (userSheet) {
-        console.log(userSheet.getName());
         var lock = LockService.getScriptLock();
         lock.waitLock(30000);
         var lastRow = userSheet.getLastRow();
@@ -35,7 +33,6 @@ function moveStory() {
           var emailBody = row[4] + '<br>' + ' — ' + row[9];
           var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('F4').getValue();
           var emailStatus = sendEmail(emailAddress,row[3],emailBody);
-          console.log(emailStatus);
         }
         SpreadsheetApp.flush();
         lock.releaseLock();
