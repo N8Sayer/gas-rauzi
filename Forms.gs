@@ -32,9 +32,10 @@ function moveStory() {
           row[10] = 'Duplicate';
         }
         if (row[7] === '') {
-          // var emailData = buildEmail(row); 
           var emailBody = row[4] + '<br>' + ' — ' + row[9];
-          sendEmail('editor1060.magpie@blogger.com',row[3],emailData.body);
+          var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('F4').getValue();
+          var emailStatus = sendEmail(emailAddress,row[3],emailBody);
+          console.log(emailStatus);
         }
         SpreadsheetApp.flush();
         lock.releaseLock();
