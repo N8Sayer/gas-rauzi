@@ -74,7 +74,7 @@ function pageMaster() {
 
 // Calls the function which makes the individual user charts
 function chartGet(dataPage, chartPage, username) {
-  var chartOrders = [['P2:P50'],['O2:O50','J2:J50'],['O2:O50','J2:J50'],['B2:B50','J2:J50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
+  var chartOrders = [['P2:P50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
   var charts = chartPage.getCharts();
   
   for (var x=0; x<charts.length; x++) {
@@ -88,13 +88,13 @@ function chartGet(dataPage, chartPage, username) {
   chartPage.getRange('C2').setValue(username + ' Dashboard');
   
   var formulas = [
-    ['=IF(ISNA(AVERAGE(\'' + username + '\'!J2:J)), AVERAGE(\'' + username + '\'!J2:J), 0)'],
+    ['=IF(COUNT(\'' + username + '\'!J2:J) > 0), AVERAGE(\'' + username + '\'!J2:J), 0)'],
     [''],
     ['Total Writing Time:'],
-    ['=IF(ISNA(SUM(\'' + username + '\'!M2:M)), SUM(\'' + username + '\'!M2:M), 0)'],
+    ['=SUM(\'' + username + '\'!M2:M)'],
     [''],
     ['Total Word Count:'],
-    ['=IF(ISNA(SUM(\'' + username + '\'!J2:J)), SUM(\'' + username + '\'!J2:J), 0)']
+    ['=SUM(\'' + username + '\'!J2:J)']
     ];
   chartPage.getRange('G13:G19').setValues(formulas);
 }

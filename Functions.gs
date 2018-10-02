@@ -113,25 +113,23 @@ function dailyEmailUpdate() {
   var dayEnd = new Date(now.getYear(),now.getMonth(),now.getDate(),2,0,0);
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   var sheetData = sheet.getDataRange().getValues();
-  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
-  var rosterData = roster.getDataRange().getValues();
   var dayData = [];
   var incorrectNames = [];
   var dayName;
   sheetData.forEach(function(row,index) {
     var dateTime = new Date(row[0]);
     var userName = row[9];
-    if (index > 0 && dateTime.getTime() > dayStart.getTime() && dateTime.getTime() < dayEnd.getTime()) {
+    if (index > 0 && dateTime.getTime() >= dayStart.getTime() && dateTime.getTime() <= dayEnd.getTime()) {
       var emailData = buildEmail(row,'daily');
       dayData.push(emailData.body);
       if (!dayName) {
         dayName = row[1];
       }
-      var nameCheck = userNameCheck(rosterData,userName);
+      var nameCheck = userNameCheck(userName);
       if (nameCheck !== userName) {
         var displayInfo = 'Row('+(index+1)+'): ';
         if (typeof nameCheck === 'object') {
-          displayInfo += 'Incorrect Submitted Username: ' + nameCheck[0] + ', Corrected Username: ' + nameCheck[1];
+          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Corrected Username: ' + nameCheck;
         } else {
           displayInfo += nameCheck;
         }
@@ -156,22 +154,32 @@ function sendEmail(recipients,subject,body) {
   return 'Email sent';    
 }
 
-function userNameCheck(rosterData,name) {
+function userNameCheck(name) {
+  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
+  var rosterData = roster.getDataRange().getValues();
+  
   var output;
-  lowerName = name.toLowerCase();
-  rosterData.forEach(function(row) {
-    var rosterName = row[2].toLowerCase();
-    if (lowerName == rosterName) {
-      output = name;
-    }
-    else if (row[0].toLowerCase().search(lowerName) !== -1) {
-      output = [name,row[2]];
+  var lowerName = name.toLowerCase();
+  rosterData.forEach(function(row, index) {
+    if (index > 0 && !output) {
+      var rosterName = row[2].toLowerCase();
+      var emailAddress = row[0];
+      if (lowerName == rosterName) {
+        output = {
+          username: name,
+          status: 'valid'
+        }
+      }
+      else if (emailAddress.toLowerCase().search(lowerName) > -1) {
+        output = {
+          username: row[2],
+          status: 'email'
+        }
+      }
     }
   });
-  if (!output) {
-    output = 'Not Found: ' + name;
-  }
-  return output;
+  
+  return output ? output : { username: name, status: 'error'};
 }
 
 function dupeCheck() {
