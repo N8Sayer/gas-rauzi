@@ -18,7 +18,7 @@ function onOpen(e) {
 // It really depends on what is being changed on the roster.
 function deleteStudents() {  
   var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
-  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','Main','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];
+  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','MAIN','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];
   
   sheets.forEach(function(sheet) {
     if (savedSheets.indexOf(sheet.getName()) === -1) {
