@@ -88,7 +88,7 @@ function chartGet(dataPage, chartPage, username) {
   chartPage.getRange('C2').setValue(username + ' Dashboard');
   
   var formulas = [
-    ['=IF(COUNT(\'' + username + '\'!J2:J) > 0), AVERAGE(\'' + username + '\'!J2:J), 0)'],
+    ['=IF(COUNT(\'' + username + '\'!J2:J) > 0, AVERAGE(\'' + username + '\'!J2:J), 0)'],
     [''],
     ['Total Writing Time:'],
     ['=SUM(\'' + username + '\'!M2:M)'],
