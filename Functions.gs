@@ -17,6 +17,7 @@ function outputBuilder(values,name,row) {
   } else {
     output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + row + ', "m/d/yyyy"))), "", "' + name + '")'];    
   }
+  Logger.log(output);
   return output;
 }
 
