@@ -126,12 +126,14 @@ function dailyEmailUpdate() {
         dayName = row[1];
       }
       var nameCheck = userNameCheck(userName);
-      if (nameCheck !== userName) {
+      if (nameCheck.username !== userName) {
         var displayInfo = 'Row('+(index+1)+'): ';
-        if (typeof nameCheck === 'object') {
-          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Corrected Username: ' + nameCheck;
+        if (nameCheck.status === 'email') {
+          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Corrected Username: ' + nameCheck.username;
+        } else if (nameCheck.status === 'error') {
+          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Could Not Correct';
         } else {
-          displayInfo += nameCheck;
+          displayInfo += nameCheck.username;
         }
         incorrectNames.push(displayInfo);
       }
@@ -179,7 +181,7 @@ function userNameCheck(name) {
     }
   });
   
-  return output ? output : { username: name, status: 'error'};
+  return output || { username: name, status: 'error'};
 }
 
 function dupeCheck() {
