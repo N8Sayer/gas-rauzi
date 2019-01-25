@@ -1,5 +1,5 @@
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values,name,row) {
+function outputBuilder(values, name, row) {
   var prevRow = row;
   row = row + 1;
   var output = [];  
@@ -17,7 +17,6 @@ function outputBuilder(values,name,row) {
   } else {
     output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + row + ', "m/d/yyyy"))), "", "' + name + '")'];    
   }
-  Logger.log(output);
   return output;
 }
 
@@ -141,15 +140,16 @@ function dailyEmailUpdate() {
   });
   var body = '<h3>Incorrect Submissions</h3>' + incorrectNames.join('<br>') + '<br><br>';
   body += '<hr>' + dayData.join('<hr><br><br><hr>') + '<hr>';
-  sendEmail('editor@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
-  sendEmail('russ@birdsinabarrel.com', '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
+  var emailList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('G5').getValue();
+  sendEmail(emailList, '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
 function sendEmail(recipients,subject,body) {
+  var sendingEmailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('F5').getValue();
   MailApp.sendEmail({
     to: recipients, 
-    name: 'editor@birdsinabarrel.com',
-    replyTo: 'editor@birdsinabarrel.com',
+    name: sendingEmailAddress,
+    replyTo: sendingEmailAddress,
     subject: subject, 
     htmlBody: body
   });
@@ -204,4 +204,13 @@ function test() {
   sheetData.forEach(function(row) {
     Logger.log(userNameCheck(rosterData,row[9]));
   });
+}
+
+function verifyEmail(email) {
+  var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return regex.test(email);
+}
+
+function testEmail() {
+  Logger.log(verifyEmail('123@me.io'));
 }
