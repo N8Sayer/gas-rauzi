@@ -205,12 +205,3 @@ function test() {
     Logger.log(userNameCheck(rosterData,row[9]));
   });
 }
-
-function verifyEmail(email) {
-  var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return regex.test(email);
-}
-
-function testEmail() {
-  Logger.log(verifyEmail('123@me.io'));
-}
