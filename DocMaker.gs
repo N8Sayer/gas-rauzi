@@ -4,8 +4,15 @@
 function testDoc() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var classMates = ss.getSheetByName('Roster').getDataRange().getDisplayValues();  
+  var settings = ss.getSheetByName('Settings').getDataRange().getDisplayValues();
   var date = new Date();
   var year = date.getYear();
+  
+  var promptTopics = settings.filter(function(row, index) {
+    return index > 0 && row[0] !== "";
+  }).map(function(row, index) {
+    return [row[0],row[1]];
+  });
   
   // This section scans through the student roster for duplicate Usernames
   // This is done because one student used multiple email addresses to submit
@@ -35,9 +42,11 @@ function testDoc() {
         return;
       }
       function promptCheck(promptDay) {
+        promptDay = promptDay.match(/\d+/g)[0];
         var output;
         promptTopics.forEach(function(promptRow) {
-          if (promptRow[0] == promptDay) {
+          var promptNum = promptRow[0].match(/\d+/g)[0];
+          if (promptNum == promptDay) {
             output = promptRow[1];
           }
         });
@@ -47,7 +56,7 @@ function testDoc() {
       var prompt = promptCheck(row[1]);  
       var title = row[3];
       var story = row[4];
-      Logger.log(student, prompt, title, story);
+      Logger.log([prompt, title]);
     });
   });
 }

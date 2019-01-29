@@ -11,6 +11,8 @@ function onOpen(e) {
     .addItem('Restore All Submissions after Delete/Update Pages', 'restoreStories')
     .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
+    .addSeparator()
+    .addItem('End session and halt processes', 'endTriggers')
     .addToUi();  
 }
 
@@ -39,6 +41,14 @@ function triggers() {
     .atHour(2)
     .everyDays(1)
     .create();
+}
+
+function endTriggers() {
+  ScriptApp.getProjectTriggers().forEach(function(trigger) {
+    ScriptApp.deleteTrigger(trigger);
+  });
+  var ui = SpreadsheetApp.getUi();
+  ui.alert('All Triggers deleted.');
 }
 
 // This function creates the pages for each student based off of the info from the Roster, and the Templates. 
