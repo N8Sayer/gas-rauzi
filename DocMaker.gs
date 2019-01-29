@@ -128,16 +128,16 @@ function docOutput() {
     body.replaceText("\\(DAYS\\)",days);
     body.appendPageBreak();
     
-    
-          
     // Here's where each story is added, and the associated stats for that story are stored for the Standings page later.
     sheetData.forEach(function (row,index) {
       // Always skips the header row
       if (index > 0) {    
         function promptCheck(promptDay) {
+          promptDay = promptDay.match(/\d+/g)[0];
           var output;
           promptTopics.forEach(function(promptRow) {
-            if (promptRow[0] == promptDay) {
+            var promptNum = promptRow[0].match(/\d+/g)[0];
+            if (promptNum == promptDay) {
               output = promptRow[1];
             }
           });
