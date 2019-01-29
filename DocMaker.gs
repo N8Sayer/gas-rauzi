@@ -110,8 +110,11 @@ function docOutput() {
     var days = sheetData.length - 1;
     
     // Replacing all the stand-in text on Pg. 2, and putting in a Page Break after the Table of Contents.
-    body.replaceText("\\(FIRST-NAME\\)",studentName.split(" ")[0].toUpperCase());
-    body.replaceText("\\(LAST-NAME\\)",studentName.split(" ")[1].toUpperCase());
+    var splitName = studentName.split(" ");
+    var firstName = splitName[0] || "";
+    var lastName = splitName[1] || "";
+    body.replaceText("\\(FIRST-NAME\\)",firstName.toUpperCase());
+    body.replaceText("\\(LAST-NAME\\)",lastName.toUpperCase());
     body.replaceText("\\(YEAR\\)",year);
     body.replaceText("\\(DAYS\\)",days);
     body.appendPageBreak();

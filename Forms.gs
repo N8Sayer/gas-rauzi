@@ -48,7 +48,7 @@ function moveStory() {
     SpreadsheetApp.flush();
     lock.releaseLock();
   });
-  sheet.getDataRange().setValues(sheetData);
+  sheet.getRange(1, 1, sheetData.length, sheetData[0].length).setValues(sheetData);
   SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('H1').setValue('Last ran on '+date);
 }
 
