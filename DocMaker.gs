@@ -1,66 +1,5 @@
 // This function creates stylized Google docs based off of the templateID and folderID found on the Settings Tab
 // This is to be run after the class has reached completion, and will generate a booklet for each student.
-
-function testDoc() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var classMates = ss.getSheetByName('Roster').getDataRange().getDisplayValues();  
-  var settings = ss.getSheetByName('Settings').getDataRange().getDisplayValues();
-  var date = new Date();
-  var year = date.getYear();
-  
-  var promptTopics = settings.filter(function(row, index) {
-    return index > 0 && row[0] !== "";
-  }).map(function(row, index) {
-    return [row[0],row[1]];
-  });
-  
-  // This section scans through the student roster for duplicate Usernames
-  // This is done because one student used multiple email addresses to submit
-  var uniqueNames = [];
-  var setter = false;
-  for (var a=1; a<classMates.length; a++) {
-    for (var b=0; b<uniqueNames.length; b++) {
-      if (classMates[a][2] == uniqueNames[b][2]) {
-        setter = true;
-        b = uniqueNames.length;
-      }
-    }
-    if (!setter) {
-      uniqueNames.push(classMates[a]);
-    }
-    setter = false;
-  }
-  Logger.log(uniqueNames);
-  
-  // This is the section that creates the stylized Google Docs for each student
-  uniqueNames.forEach(function (student) {  
-    var sheetData = ss.getSheetByName(student[2]).getDataRange().getDisplayValues();
-    var studentName = student[1];
-    sheetData.forEach(function (row,index) {
-      // Always skips the header row
-      if (index === 0) {    
-        return;
-      }
-      function promptCheck(promptDay) {
-        promptDay = promptDay.match(/\d+/g)[0];
-        var output;
-        promptTopics.forEach(function(promptRow) {
-          var promptNum = promptRow[0].match(/\d+/g)[0];
-          if (promptNum == promptDay) {
-            output = promptRow[1];
-          }
-        });
-        return output;
-      }
-      
-      var prompt = promptCheck(row[1]);  
-      var title = row[3];
-      var story = row[4];
-      Logger.log([prompt, title]);
-    });
-  });
-}
-
 function docOutput() {
   // This chunk gets the fileId for the template, and the output folderID. 
   // Then it grabs the corresponding Template file and Folder and assigns them permanent variables.
@@ -127,66 +66,67 @@ function docOutput() {
     body.replaceText("\\(YEAR\\)",year);
     body.replaceText("\\(DAYS\\)",days);
     body.appendPageBreak();
-    
+          
     // Here's where each story is added, and the associated stats for that story are stored for the Standings page later.
     sheetData.forEach(function (row,index) {
       // Always skips the header row
-      if (index > 0) {    
-        function promptCheck(promptDay) {
-          promptDay = promptDay.match(/\d+/g)[0];
-          var output;
-          promptTopics.forEach(function(promptRow) {
-            var promptNum = promptRow[0].match(/\d+/g)[0];
-            if (promptNum == promptDay) {
-              output = promptRow[1];
-            }
-          });
-          return output;
-        }
-        
-        var prompt = promptCheck(row[1]);  
-        var title = row[3];
-        var story = row[4];
-        wordCount += parseInt(row[9]);
-        timeCount += parseInt(row[10],10);
-        
-        // This section is all to stylize the Prompt header above each story.
-        var parStyle = {};
-          parStyle[DocumentApp.Attribute.FONT_FAMILY] = 'Avenir';
-          parStyle[DocumentApp.Attribute.FONT_SIZE] = 12;
-          parStyle[DocumentApp.Attribute.BOLD] = true;
-          parStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1F3864';
-          parStyle[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.CENTER;
-        body.appendParagraph(prompt).setAttributes(parStyle);
-        
-        // Append the title, and a blank row.
-        body.appendParagraph(title).setHeading(DocumentApp.ParagraphHeading.HEADING1);
-        body.appendParagraph('');
-        
-        // Justify the body of the story
-        var par2Style = {};
-          par2Style[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.JUSTIFY;
-        body.appendParagraph(story).setAttributes(par2Style);
-        
-        // Page break after each story
-        body.appendPageBreak();
+      if (index === 0) {    
+        return;
       }
+      function promptCheck(promptDay) {
+        promptDay = promptDay.match(/\d+/g)[0];
+        var output;
+        promptTopics.forEach(function(promptRow) {
+          var promptNum = promptRow[0].match(/\d+/g)[0];
+          if (promptNum == promptDay) {
+            output = promptRow[1];
+          }
+        });
+        return output;
+      }
+      
+      var prompt = promptCheck(row[1]);  
+      var title = row[3];
+      var story = row[4];
+      wordCount += parseInt(row[9]);
+      timeCount += parseInt(row[10],10);
+      
+      // This section is all to stylize the Prompt header above each story.
+      var parStyle = {};
+      parStyle[DocumentApp.Attribute.FONT_FAMILY] = 'Avenir';
+      parStyle[DocumentApp.Attribute.FONT_SIZE] = 12;
+      parStyle[DocumentApp.Attribute.BOLD] = true;
+      parStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1F3864';
+      parStyle[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.CENTER;
+      body.appendParagraph(prompt).setAttributes(parStyle);
+      
+      // Append the title, and a blank row.
+      body.appendParagraph(title).setHeading(DocumentApp.ParagraphHeading.HEADING1);
+      body.appendParagraph('');
+      
+      // Justify the body of the story
+      var par2Style = {};
+      par2Style[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.JUSTIFY;
+      body.appendParagraph(story).setAttributes(par2Style);
+      
+      // Page break after each story
+      body.appendPageBreak();      
     });
     
     // Last few settings to properly add in the Standings page at the end
     body.appendParagraph('STANDINGS').setHeading(DocumentApp.ParagraphHeading.HEADING5);
     
     var average = wordCount/days;
-    var text = 'DAYS: ' + days + ' OF 40\n'+
-      'AVERAGE WRITE: '+ Math.round(average) +' WORDS\n'+
-      'TOTAL WORD COUNT: '+ wordCount + '\n'+
+    var text = 'DAYS: ' + days + ' OF 40\n' +
+      'AVERAGE WRITE: '+ Math.round(average) +' WORDS\n' +
+      'TOTAL WORD COUNT: '+ wordCount + '\n' +
       'AVERAGE WPM :' + Math.round(wordCount/timeCount);
     
     var style = {};
-      style[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
-      style[DocumentApp.Attribute.FONT_SIZE] = 14;
-      style[DocumentApp.Attribute.BOLD] = true;
-      style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1F3864';
+    style[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
+    style[DocumentApp.Attribute.FONT_SIZE] = 14;
+    style[DocumentApp.Attribute.BOLD] = true;
+    style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#1F3864';
     
     body.appendParagraph(text).setAttributes(style);  
   });

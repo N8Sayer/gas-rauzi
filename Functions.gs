@@ -195,13 +195,3 @@ function dupeCheck() {
     });
   });
 }
-
-function test() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
-  var sheetData = sheet.getDataRange().getValues();
-  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
-  var rosterData = roster.getDataRange().getValues();
-  sheetData.forEach(function(row) {
-    Logger.log(userNameCheck(rosterData,row[9]));
-  });
-}
