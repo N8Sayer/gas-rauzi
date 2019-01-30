@@ -3,9 +3,16 @@ function outputBuilder(values, name, row) {
   var prevRow = row;
   row = row + 1;
   var output = [];  
-  for (var x=0; x<values.length; x++) {
+  for (var x = 0; x < values.length; x++) {
     output[x] = values[x];
-  }  
+  }
+  var checkSingleReturns = story[0].match(/(^|[^\n])\n(?!\n)/g);
+  var checkDoubleReturns = story[0].match(/[\r\n]{2,}/g);
+  var hasSingleReturns = checkSingleReturns && checkSingleReturns.length;
+  var hasDoubleReturns = checkDoubleReturns && checkDoubleReturns.length;
+  if (!hasSingleReturns || !hasDoubleReturns) {
+    output[4] = output[4].replace(/[\r\n]+/g, "\r\r");
+  }    
   output[9] = ['=COUNTA(SPLIT(E:E, " "))'];
   output[10] = output[4].match(/[?!.]\s?/g) ? [output[4].match(/[?!.]\s?/g).length] : 0;
   output[11] = ['=ROUND(J:J/K:K)'];

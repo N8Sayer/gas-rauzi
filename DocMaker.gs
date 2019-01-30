@@ -7,6 +7,7 @@ function docOutput() {
   var settings = ss.getSheetByName('Settings').getDataRange().getDisplayValues();
   var fileId = settings[1][4];
   var folderId = settings[1][5];
+  var flockName = settings[1][6];
   var template = DriveApp.getFileById(fileId);
   var driveFolder = DriveApp.getFolderById(folderId);
   
@@ -61,10 +62,11 @@ function docOutput() {
     var splitName = studentName.split(" ");
     var firstName = splitName[0] || "";
     var lastName = splitName[1] || "";
-    body.replaceText("\\(FIRST-NAME\\)",firstName.toUpperCase());
-    body.replaceText("\\(LAST-NAME\\)",lastName.toUpperCase());
-    body.replaceText("\\(YEAR\\)",year);
-    body.replaceText("\\(DAYS\\)",days);
+    body.replaceText("\\(FIRST-NAME\\)", firstName.toUpperCase());
+    body.replaceText("\\(LAST-NAME\\)", lastName.toUpperCase());
+    body.replaceText("\\(FLOCK-NAME\\)", flockName.toUpperCase());
+    body.replaceText("\\(YEAR\\)", year);
+    body.replaceText("\\(DAYS\\)", days);
     body.appendPageBreak();
           
     // Here's where each story is added, and the associated stats for that story are stored for the Standings page later.
