@@ -1,13 +1,13 @@
 // Appends the extra stats onto forms before they are moved to the correct student sheet
-function outputBuilder(values, name, row) {
-  var prevRow = row;
-  row = row + 1;
+function outputBuilder(values, name, rowNum) {
+  var prevRow = rowNum;
+  rowNum = rowNum + 1;
   var output = [];  
   for (var x = 0; x < values.length; x++) {
     output[x] = values[x];
   }
-  var checkSingleReturns = story[0].match(/(^|[^\n])\n(?!\n)/g);
-  var checkDoubleReturns = story[0].match(/[\r\n]{2,}/g);
+  var checkSingleReturns = output[4].match(/(^|[^\n])\n(?!\n)/g);
+  var checkDoubleReturns = output[4].match(/[\r\n]{2,}/g);
   var hasSingleReturns = checkSingleReturns && checkSingleReturns.length;
   var hasDoubleReturns = checkDoubleReturns && checkDoubleReturns.length;
   if (!hasSingleReturns || !hasDoubleReturns) {
@@ -19,10 +19,10 @@ function outputBuilder(values, name, row) {
   output[12] = output[5];
   output[13] = ['=J:J/M:M'];
   output[14] = [name];
-  if (row === 2) {
+  if (rowNum === 2) {
     output[15] = [name];
   } else {
-    output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + row + ', "m/d/yyyy"))), "", "' + name + '")'];    
+    output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + rowNum + ', "m/d/yyyy"))), "", "' + name + '")'];    
   }
   return output;
 }
