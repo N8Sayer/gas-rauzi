@@ -48,10 +48,10 @@ function formulaMaker(names) {
   
   for (var x=1; x<uniqueNames.length; x++) {
     if (x == uniqueNames.length-1) {
-      formula += "'" + uniqueNames[x][2] + "'" + "!A2:P";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O";
     }
     else {
-      formula += "'" + uniqueNames[x][2] + "'" + "!A2:P;";
+      formula += "'" + uniqueNames[x][2] + "'" + "!A2:O;";
     }
   }
   formula += '},{';

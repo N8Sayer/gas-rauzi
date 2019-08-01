@@ -4,13 +4,11 @@ function onOpen(e) {
   ui.createMenu('Setup Menu')
     .addItem('Update Student Pages After Roster Change', 'pageMaster')
     .addSeparator()
-    .addItem('Install Triggers (Run Once)', 'triggers')
-    .addSeparator()
     .addItem('Delete Student Pages', 'deleteStudents')
     .addSeparator()
-    .addItem('Restore All Submissions after Delete/Update Pages', 'restoreStories')
-    .addSeparator()
     .addItem('Make Student Story Books', 'docOutput')
+    .addSeparator()
+    .addItem('Install Triggers (Run Once)', 'triggers')
     .addSeparator()
     .addItem('End session and halt processes', 'endTriggers')
     .addToUi();  
@@ -20,8 +18,7 @@ function onOpen(e) {
 // It really depends on what is being changed on the roster.
 function deleteStudents() {  
   var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
-  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','MAIN','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];
-  
+  var savedSheets = ['40 Day Form Response','Birds Flying to Blog','Roster','Settings','MAIN','Template - Data','Template - Individual Charts','Group Charts', 'Admin Charts'];  
   sheets.forEach(function(sheet) {
     if (savedSheets.indexOf(sheet.getName()) === -1) {
       SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
@@ -34,7 +31,7 @@ function triggers() {
   var sheet = SpreadsheetApp.getActive();
   ScriptApp.newTrigger("moveStory")
    .timeBased()
-   .everyMinutes(15)
+   .everyMinutes(60)
    .create();
   ScriptApp.newTrigger("dailyEmailUpdate")
     .timeBased()
@@ -61,19 +58,20 @@ function pageMaster() {
   
   names.forEach(function(row,index) {
     var username = row[2];
-    if (index > 0) {
-      if (username !== "") {
-        if (!ss.getSheetByName(username)) {
-          var userSheet = ss.insertSheet(ss.getSheets().length + 1, { template: template1 });
-          userSheet.setName(username);
-        }
-        if (!ss.getSheetByName(username + ' Charts')) {
-          var userCharts = ss.insertSheet(ss.getSheets().length + 1, { template: template2});
-          userCharts.setName(username + ' Charts');
-          // Calls the chart making function
-          chartGet(userSheet, userCharts, username);                
-        }
-      }
+    if (index === 0 || !username.length) {
+      return;
+    }
+    if (!ss.getSheetByName(username)) {
+      var userSheet = ss.insertSheet(ss.getSheets().length + 1, { template: template1 });
+      userSheet.setName(username);
+      var templateFormulas = getTemplateFormulas(username);
+      userSheet.getRange('2:2').setValues(templateFormulas);
+    }
+    if (!ss.getSheetByName(username + ' Charts')) {
+      var userCharts = ss.insertSheet(ss.getSheets().length + 1, { template: template2});
+      userCharts.setName(username + ' Charts');
+      // Calls the chart making function
+      chartGet(userSheet, userCharts, username);                
     }
   });
   
@@ -84,7 +82,7 @@ function pageMaster() {
 
 // Calls the function which makes the individual user charts
 function chartGet(dataPage, chartPage, username) {
-  var chartOrders = [['P2:P50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
+  var chartOrders = [['O2:O50'],['O2:O50','N2:N50'],['A2:A50','J2:J50']];
   var charts = chartPage.getCharts();
   
   for (var x=0; x<charts.length; x++) {
