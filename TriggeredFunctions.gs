@@ -4,18 +4,19 @@ function moveStory() {
   date = Utilities.formatDate(date, 'PST', 'M/d/yyyy h:mm a');
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   var sheetData = sheet.getDataRange().getValues();
+  var rosterData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getValues();
   
   sheetData.forEach(function(row, index) {
     var sortedCheck = row[10];
-    var userName = row[9];
-    var nameCheck = userNameCheck(userName);
-    
     if (index === 0 || sortedCheck !== "") {
       Logger.log('Row %s sorted', index + 1);
       return;
     }
+    var userName = row[9];
+    var nameCheck = userNameCheck(userName, rosterData);
+    
     if (nameCheck.status === 'error') {
-      Logger.log('Invalid Username');
+//      Logger.log('Invalid Username');
       row[10] = 'Invalid Username';
       return;
     }
@@ -23,10 +24,18 @@ function moveStory() {
     var outputName = nameCheck.username; 
     row[9] = outputName;
     
-    var output = outputBuilder(row, outputName, lastRow);
+    // Check to replace return style for better formatting
+    var checkSingleReturns = row[4].match(/(^|[^\n])\n(?!\n)/g);
+    var checkDoubleReturns = row[4].match(/[\r\n]{2,}/g);
+    var hasSingleReturns = checkSingleReturns && checkSingleReturns.length;
+    var hasDoubleReturns = checkDoubleReturns && checkDoubleReturns.length;
+    if (!hasSingleReturns || !hasDoubleReturns) {
+      row[4] = row[4].replace(/[\r\n]+/g, "\r\r");
+    }  
+    
     var isDuplicate = false;
-    sheetData.slice(0, index).forEach(function(row) {
-      if (row[1] == output[1] && row[4] == output[4]) {
+    sheetData.slice(0, index).forEach(function(secondRow) {
+      if (row[1] == secondRow[1] && row[4] == secondRow[4]) {
         isDuplicate = true;
       }
     });

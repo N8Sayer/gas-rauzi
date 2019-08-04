@@ -1,4 +1,5 @@
 // Appends the extra stats onto forms before they are moved to the correct student sheet
+/* DEPRECATED 8/2/2019
 function outputBuilder(values, name, rowNum) {
   var prevRow = rowNum;
   rowNum = rowNum + 1;
@@ -25,7 +26,7 @@ function outputBuilder(values, name, rowNum) {
     output[15] = ['=IF(COUNT(FILTER($A$2:$A' + prevRow + ', TEXT($A$2:$A' + prevRow + ', "m/d/yyyy") = TEXT($A' + rowNum + ', "m/d/yyyy"))), "", "' + name + '")'];    
   }
   return output;
-}
+} */
 
 // Creates the custom formula used on MAIN to display all of the student data for the Group Charts to feed off of 
 function formulaMaker(names) { 
@@ -118,7 +119,9 @@ function dailyEmailUpdate() {
   var dayStart = new Date(now.getYear(),now.getMonth(),now.getDate()-1,2,0,0);
   var dayEnd = new Date(now.getYear(),now.getMonth(),now.getDate(),2,0,0);
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
-  var sheetData = sheet.getDataRange().getValues();
+  var sheetData = sheet.getDataRange().getValues();  
+  var rosterData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getValues();
+  
   var dayData = [];
   var incorrectNames = [];
   var dayName;
@@ -131,7 +134,7 @@ function dailyEmailUpdate() {
       if (!dayName) {
         dayName = row[1];
       }
-      var nameCheck = userNameCheck(userName);
+      var nameCheck = userNameCheck(userName, rosterData);
       if (nameCheck.username !== userName) {
         var displayInfo = 'Row('+(index+1)+'): ';
         if (nameCheck.status === 'email') {
@@ -163,10 +166,7 @@ function sendEmail(recipients,subject,body) {
   return 'Email sent';    
 }
 
-function userNameCheck(name) {
-  var roster = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster');
-  var rosterData = roster.getDataRange().getValues();
-  
+function userNameCheck(name, rosterData) {  
   var output;
   var lowerName = name.toLowerCase();
   rosterData.forEach(function(row, index) {
@@ -175,7 +175,7 @@ function userNameCheck(name) {
       var emailAddress = row[0];
       if (lowerName == rosterName) {
         output = {
-          username: name,
+          username: row[2],
           status: 'valid'
         }
       }
