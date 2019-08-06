@@ -1,3 +1,17 @@
+function testStory() {
+  var row = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response').getRange('485:485').getValues()[0];
+  Logger.log(row[4]);
+  var checkSingleReturns = row[4].match(/(^|[^\n])\n(?!\n)/g);
+  var checkDoubleReturns = row[4].match(/[\r\n]{2,}/g);
+  var hasSingleReturns = checkSingleReturns && checkSingleReturns.length;
+  var hasDoubleReturns = checkDoubleReturns && checkDoubleReturns.length;
+  Logger.log([hasSingleReturns, hasDoubleReturns]);
+  if (!hasSingleReturns || !hasDoubleReturns) {
+    row[4] = row[4].replace(/[\r\n]+/g, "\r\r");
+  }
+  Logger.log(row[4].replace(/[\r\n]+/g, '<br><br>') + '<br>' + ' — ' + row[9]);
+}
+
 // Rename to validateSubmissions moving forward
 function moveStory() {
   var date = new Date();
@@ -42,7 +56,7 @@ function moveStory() {
     row[10] = isDuplicate ? "Duplicate" : "Sorted";
     
     if (row[7] === '') {
-      var emailBody = row[4].replace(/\n/g, '<br>') + '<br>' + ' — ' + row[9];
+      var emailBody = row[4].replace(/[\r\n]+/g, '<br><br>') + '<br>' + ' — ' + row[9];
       var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('E5').getValue();
       var emailStatus = sendEmail(emailAddress,row[3],emailBody);
     }
