@@ -44,7 +44,7 @@ function moveStory() {
     if (row[7] === '' && row[10] !== 'Duplicate') {
       var emailBody = row[4] + '\r\r' + ' — ' + row[9];
       var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('E5').getValue();
-      var emailStatus = sendEmail(emailAddress,row[3],emailBody);
+      var emailStatus = sendBlogEmail(emailAddress,row[3],emailBody);
     }
   });
   sheet.getRange(1, 1, sheetData.length, sheetData[0].length).setValues(sheetData);

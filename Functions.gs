@@ -154,6 +154,18 @@ function dailyEmailUpdate() {
   sendEmail(emailList, '40 Days Summary for ' + dayName + ' - ' + SpreadsheetApp.getActiveSpreadsheet().getName(), body);
 }
 
+function sendBlogEmail(recipients, subject, plaintextBody) {
+  var sendingEmailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('F5').getValue();
+  MailApp.sendEmail({
+    to: recipients, 
+    name: sendingEmailAddress,
+    replyTo: sendingEmailAddress,
+    subject: subject, 
+    body: plaintextBody
+  });
+  return 'Email sent';  
+}
+
 function sendEmail(recipients,subject,body) {
   var sendingEmailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('F5').getValue();
   MailApp.sendEmail({
