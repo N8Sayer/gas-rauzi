@@ -1,3 +1,6 @@
+// Wayback article on the post-to-blog via email function
+// https://web.archive.org/web/20150912113817/https://support.squarespace.com/hc/en-us/articles/205814678
+
 // When the document opens, make a Custom Menu for user functions.
 function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
