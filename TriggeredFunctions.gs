@@ -41,7 +41,7 @@ function moveStory() {
     });
     row[10] = isDuplicate ? "Duplicate" : "Sorted";
     
-    if (row[7] === '') {
+    if (row[7] === '' && row[10] !== 'Duplicate') {
       var emailBody = row[4] + '\r\r' + ' — ' + row[9];
       var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('E5').getValue();
       var emailStatus = sendEmail(emailAddress,row[3],emailBody);
