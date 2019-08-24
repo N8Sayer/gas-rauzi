@@ -51,7 +51,9 @@ function docOutput() {
     var timeCount = 0;
     
     // Get the current student's sheet, and declare student name
-    var sheetData = ss.getSheetByName(student[2]).getDataRange().getDisplayValues();
+    var sheetData = ss.getSheetByName(student[2]).getDataRange().getDisplayValues().filter(function(row) {
+      return row[0] && row[0].length;
+    });
     var studentName = student[1];
     // This section assumes no duplicate entries have made it through the onFormSubmit, and declares the total days of submissions to be = to the length of the sheet.
     var days = sheetData.length - 1;
