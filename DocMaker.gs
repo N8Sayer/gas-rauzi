@@ -12,11 +12,10 @@ function docOutput() {
   var driveFolder = DriveApp.getFolderById(folderId);
   
   var promptTopics = settings.filter(function(row, index) {
-    return index > 0 && row[0] !== "";
+    return index > 0 && row[0] && row[0].length;
   }).map(function(row, index) {
     return [row[0],row[1]];
   });
-  
   // This section pulls in all the student information from the Roster Tab. It also grabs the current date to get current year.
   var classMates = ss.getSheetByName('Roster').getDataRange().getDisplayValues();  
   var date = new Date();
@@ -54,7 +53,6 @@ function docOutput() {
     // Get the current student's sheet, and declare student name
     var sheetData = ss.getSheetByName(student[2]).getDataRange().getDisplayValues();
     var studentName = student[1];
-    
     // This section assumes no duplicate entries have made it through the onFormSubmit, and declares the total days of submissions to be = to the length of the sheet.
     var days = sheetData.length - 1;
     
@@ -72,15 +70,15 @@ function docOutput() {
     // Here's where each story is added, and the associated stats for that story are stored for the Standings page later.
     sheetData.forEach(function (row,index) {
       // Always skips the header row
-      if (index === 0) {    
+      if (index === 0 || !row[0].length) {    
         return;
       }
       function promptCheck(promptDay) {
-        promptDay = promptDay.match(/\d+/g)[0];
+        var promptDayNumber = promptDay.match(/\d+/g)[0];
         var output;
         promptTopics.forEach(function(promptRow) {
           var promptNum = promptRow[0].match(/\d+/g)[0];
-          if (promptNum == promptDay) {
+          if (promptNum == promptDayNumber) {
             output = promptRow[1];
           }
         });
@@ -90,8 +88,8 @@ function docOutput() {
       var prompt = promptCheck(row[1]);  
       var title = row[3];
       var story = row[4];
-      wordCount += parseInt(row[9]);
-      timeCount += parseInt(row[10],10);
+      wordCount += parseInt(row[9], 10);
+      timeCount += parseInt(row[10], 10);
       
       // This section is all to stylize the Prompt header above each story.
       var parStyle = {};
