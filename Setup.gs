@@ -3,18 +3,30 @@
 
 // When the document opens, make a Custom Menu for user functions.
 function onOpen(e) {
+  displayMenu();
+}
+
+function displayMenu() {  
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Setup Menu')
+  var menu = ui.createMenu('BiaB Menu');
+  var students = ui.createMenu('Students')
     .addItem('Update Student Pages After Roster Change', 'pageMaster')
     .addSeparator()
-    .addItem('Delete Student Pages', 'deleteStudents')
-    .addSeparator()
-    .addItem('Make Student Story Books', 'docOutput')
-    .addSeparator()
-    .addItem('Install Triggers (Run Once)', 'triggers')
-    .addSeparator()
-    .addItem('End session and halt processes', 'endTriggers')
-    .addToUi();  
+    .addItem('Delete Student Pages', 'deleteStudents');
+  var stories = ui.createMenu('Stories')
+    .addItem('Make Student Story Books', 'docOutput');
+  var triggers = ui.createMenu('Triggers');
+  var isSetup = PropertiesService.getScriptProperties().getProperty('setupDate');
+  if (!isSetup) {
+    triggers.addItem('Install Triggers (Run Once)', 'triggers');
+  } else {
+    triggers.addItem('End session and halt processes', 'endTriggers');
+  }
+  menu
+    .addSubMenu(students)
+    .addSubMenu(stories)
+    .addSubMenu(triggers)
+    .addToUi(); 
 }
 
 // When students drop out, sometimes it's necessary to run this before updating the roster.
@@ -32,15 +44,19 @@ function deleteStudents() {
 // Create the onFormSubmit trigger.
 function triggers() {
   var sheet = SpreadsheetApp.getActive();
-  ScriptApp.newTrigger("moveStory")
+  ScriptApp.newTrigger("validateSubmissions")
    .timeBased()
-   .everyMinutes(60)
+   .everyMinutes(5)
    .create();
   ScriptApp.newTrigger("dailyEmailUpdate")
     .timeBased()
     .atHour(2)
     .everyDays(1)
     .create();
+  var today = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'M/d/yyyy');
+  PropertiesService.getScriptProperties().setProperty('setupDate', today);
+  displayMenu();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('E12').setValue(today);
 }
 
 function endTriggers() {

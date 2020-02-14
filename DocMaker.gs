@@ -76,7 +76,7 @@ function docOutput() {
         return;
       }
       function promptCheck(promptDay) {
-        var promptDayNumber = promptDay.match(/\d+/g)[0];
+        var promptDayNumber = promptDay.match(/\d+/g) ? promptDay.match(/\d+/g)[0] : -1;
         var output;
         promptTopics.forEach(function(promptRow) {
           var promptNum = promptRow[0].match(/\d+/g)[0];
@@ -87,6 +87,9 @@ function docOutput() {
         return output;
       }
       
+      if (!row[3].length && !row[4].length) {
+        return;
+      }
       var prompt = promptCheck(row[1]);  
       var title = row[3];
       var story = row[4];

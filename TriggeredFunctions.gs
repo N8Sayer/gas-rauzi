@@ -1,7 +1,14 @@
-// Rename to validateSubmissions moving forward
-function moveStory() {
+function testUsernameCheck() {
+  var users = ['Maripat','Virgoea','Marmar','Wilfar','Wilfa'];
+  var rosterData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getValues();
+  users.forEach(function(user) {
+    Logger.log(userNameCheck(user, rosterData));
+  });
+}
+
+function validateSubmissions() {
   var date = new Date();
-  date = Utilities.formatDate(date, 'PST', 'M/d/yyyy h:mm a');
+  date = Utilities.formatDate(date, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'M/d/yyyy h:mm a');
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('40 Day Form Response');
   var sheetData = sheet.getDataRange().getValues();
   var rosterData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getValues();
@@ -15,8 +22,9 @@ function moveStory() {
     var userName = row[9];
     var nameCheck = userNameCheck(userName, rosterData);
     
-    if (nameCheck.status === 'error') {
+    if (nameCheck.status == 'error') {
 //      Logger.log('Invalid Username');
+      
       row[10] = 'Invalid Username';
       return;
     }
@@ -41,7 +49,7 @@ function moveStory() {
     });
     row[10] = isDuplicate ? "Duplicate" : "Sorted";
     
-    if (row[7] === '' && row[10] !== 'Duplicate') {
+    if (row[7] == '' && row[10] !== 'Duplicate') {
       var emailBody = row[4] + '\r\r' + ' — ' + row[9];
       var emailAddress = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Settings').getRange('E5').getValue();
       var emailStatus = sendBlogEmail(emailAddress,row[3],emailBody);

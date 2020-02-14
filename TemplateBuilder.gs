@@ -1,6 +1,6 @@
 function getTemplateFormulas(username) {
   return [[
-    '=IFERROR(FILTER(\'40 Day Form Response\'!A2:I, \'40 Day Form Response\'!J2:J = "' + username + '"), "")',
+    '=IFERROR(FILTER(\'40 Day Form Response\'!$A$2:$I, \'40 Day Form Response\'!$J$2:$J = "' + username + '", \'40 Day Form Response\'!$K$2:$K = "Sorted"), "")',
     "",
     "",
     "",

@@ -29,7 +29,7 @@ function outputBuilder(values, name, rowNum) {
 } */
 
 // Creates the custom formula used on MAIN to display all of the student data for the Group Charts to feed off of 
-function formulaMaker(names) { 
+function formulaMaker(names) {
   var uniqueNames = [];
   var setter = false;
   for (var a=0; a<names.length; a++) {
@@ -135,16 +135,14 @@ function dailyEmailUpdate() {
         dayName = row[1];
       }
       var nameCheck = userNameCheck(userName, rosterData);
-      if (nameCheck.username !== userName) {
-        var displayInfo = 'Row('+(index+1)+'): ';
-        if (nameCheck.status === 'email') {
-          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Corrected Username: ' + nameCheck.username;
-        } else if (nameCheck.status === 'error') {
-          displayInfo += 'Incorrectly Submitted Username: ' + userName + ', Could Not Correct';
-        } else {
-          displayInfo += nameCheck.username;
-        }
-        incorrectNames.push(displayInfo);
+      var displayInfo;
+      if (nameCheck.status === 'email') {
+        displayInfo = 'Row('+(index+1)+'): ' + 'Incorrectly Submitted Username: ' + userName + ', Corrected Username: ' + nameCheck.username;
+      } else if (nameCheck.status === 'error') {
+        displayInfo = 'Row('+(index+1)+'): ' + 'Incorrectly Submitted Username: ' + userName + ', Could Not Correct';
+      } 
+      if (displayInfo) {
+        incorrectNames.push(displayInfo);      
       }
     }
   });
@@ -178,7 +176,7 @@ function sendEmail(recipients,subject,body) {
   return 'Email sent';    
 }
 
-function userNameCheck(name, rosterData) {  
+function userNameCheck(name, rosterData) {
   var output;
   var lowerName = name.toLowerCase();
   rosterData.forEach(function(row, index) {
