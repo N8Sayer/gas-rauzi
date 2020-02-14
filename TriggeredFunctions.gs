@@ -1,11 +1,3 @@
-function testUsernameCheck() {
-  var users = ['Maripat','Virgoea','Marmar','Wilfar','Wilfa'];
-  var rosterData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Roster').getDataRange().getValues();
-  users.forEach(function(user) {
-    Logger.log(userNameCheck(user, rosterData));
-  });
-}
-
 function validateSubmissions() {
   var date = new Date();
   date = Utilities.formatDate(date, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'M/d/yyyy h:mm a');
